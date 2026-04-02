@@ -1,4 +1,4 @@
-# MediQueue
+# Cure
 
 **Hospital Patient Flow & Overcrowding Management Platform**
 
