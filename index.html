@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediQueue — Apollo Hospitals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --surface2: #f0ede7;
+  --border: #e2ddd6;
+  --text: #1a1714;
+  --text2: #5c574f;
+  --text3: #9b948a;
+  --accent: #c8402a;
+  --accent2: #e8563c;
+  --accent-light: #fdf0ed;
+  --teal: #1a6b6b;
+  --teal-light: #e6f3f3;
+  --gold: #b5860d;
+  --gold-light: #fef8e6;
+  --green: #2a7a4a;
+  --green-light: #e8f5ee;
+  --yellow: #b5720d;
+  --yellow-light: #fdf4e0;
+  --red: #c8402a;
+  --red-light: #fdf0ed;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 16px rgba(26,23,20,0.08);
+  --shadow-lg: 0 8px 40px rgba(26,23,20,0.14);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ─── NAV ─────────────────────────────────────────── */
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 var(--border), var(--shadow);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  transition: opacity .2s;
+}
+.nav-brand:hover { opacity: .8; }
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+}
+
+.brand-info { line-height: 1.2; }
+.brand-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  color: var(--text);
+  display: block;
+}
+.brand-location {
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--border);
+  margin: 0 20px;
+  flex-shrink: 0;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.nav-tab:hover { background: var(--surface2); color: var(--text); }
+.nav-tab.active { background: var(--accent-light); color: var(--accent); }
+
+.nav-emergency {
+  margin-left: auto;
+  padding: 9px 18px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+  flex-shrink: 0;
+  animation: pulse-btn 2s infinite;
+}
+@keyframes pulse-btn {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200,64,42,.4); }
+  50% { box-shadow: 0 0 0 6px rgba(200,64,42,0); }
+}
+.nav-emergency:hover { background: var(--accent2); transform: translateY(-1px); }
+
+.lang-btn {
+  margin-left: 10px;
+  padding: 7px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text2);
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.lang-btn:hover { background: var(--border); }
+
+/* ─── PAGES ───────────────────────────────────────── */
+.page { display: none; padding: 32px 28px; max-width: 1100px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ─── INTAKE FORM ─────────────────────────────────── */
+.form-header {
+  margin-bottom: 32px;
+}
+.form-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-header p { color: var(--text2); font-size: 15px; }
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 19px;
+  color: var(--text);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.icon-blue { background: #e6f0fb; }
+.icon-teal { background: var(--teal-light); }
+.icon-gold { background: var(--gold-light); }
+.icon-red { background: var(--red-light); }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.span-2 { grid-column: span 2; }
+.span-full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+.field input, .field select, .field textarea {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(26,107,107,.1);
+}
+.field textarea { resize: vertical; min-height: 80px; }
+
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.checkbox-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text2);
+  transition: all .2s;
+  background: var(--surface);
+  user-select: none;
+}
+.checkbox-pill input { display: none; }
+.checkbox-pill.checked { background: var(--teal-light); border-color: var(--teal); color: var(--teal); font-weight: 500; }
+
+.already-patient {
+  background: var(--gold-light);
+  border: 1px solid #e8c976;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--gold);
+}
+
+.form-submit-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+.btn {
+  padding: 13px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+}
+.btn-primary { background: var(--teal); color: white; }
+.btn-primary:hover { background: #155858; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,107,107,.3); }
+.btn-outline { background: transparent; color: var(--text2); border: 1.5px solid var(--border); }
+.btn-outline:hover { background: var(--surface2); }
+
+/* ─── TRIAGE RESULT ───────────────────────────────── */
+.result-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,23,20,.6);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.result-overlay.show { display: flex; }
+
+.result-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 36px;
+  max-width: 520px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp .3s ease;
+  position: relative;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.result-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text3);
+  transition: color .2s;
+}
+.result-close:hover { color: var(--text); }
+
+.esi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.esi-1 { background: #fde8e8; color: #b91c1c; }
+.esi-2 { background: #fff0e0; color: #c25c0d; }
+.esi-3 { background: #fef9c3; color: #854d0e; }
+.esi-4 { background: var(--green-light); color: var(--green); }
+.esi-5 { background: #f0f4ff; color: #3b4fd4; }
+
+.result-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.result-meta { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
+
+.result-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.result-info-box {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+.result-info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin-bottom: 4px; }
+.result-info-box .value { font-size: 20px; font-weight: 600; color: var(--text); }
+.result-info-box .sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+.doctor-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--teal-light);
+  border-radius: var(--radius-sm);
+  border: 1px solid #b8dada;
+  margin-bottom: 20px;
+}
+.doctor-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.doctor-info .name { font-weight: 600; font-size: 14px; color: var(--text); }
+.doctor-info .spec { font-size: 12px; color: var(--text3); }
+
+.sms-note {
+  font-size: 12px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  justify-content: center;
+}
+
+/* ─── STATUS PAGE ─────────────────────────────────── */
+.status-header {
+  margin-bottom: 28px;
+}
+.status-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+.status-header p { color: var(--text2); font-size: 15px; }
+
+.week-bubbles-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.week-bubbles-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  margin-bottom: 16px;
+}
+
+.week-bubbles {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.day-bubble {
+  flex: 0 0 auto;
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform .2s;
+}
+.day-bubble:hover { transform: translateY(-2px); }
+
+.bubble-day { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .4px; }
+
+.bubble-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  border: 3px solid transparent;
+  transition: all .2s;
+  cursor: pointer;
+  line-height: 1;
+}
+.bubble-num { font-size: 18px; font-weight: 700; }
+.bubble-sub { font-size: 9px; font-weight: 500; opacity: .8; margin-top: 1px; }
+
+.bubble-green { background: #e8f5ee; color: #2a7a4a; }
+.bubble-yellow { background: #fdf4e0; color: #b5720d; }
+.bubble-red { background: #fdf0ed; color: #c8402a; }
+
+.day-bubble.selected .bubble-circle {
+  border-color: var(--text);
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(26,23,20,.15);
+}
+
+.bubble-label { font-size: 10px; color: var(--text3); }
+
+.crowd-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot-green { background: #2a7a4a; }
+.dot-yellow { background: #b5720d; }
+.dot-red { background: #c8402a; }
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.filter-chip:hover { background: var(--surface2); }
+.filter-chip.active { background: var(--teal); border-color: var(--teal); color: white; font-weight: 500; }
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.dept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: transform .2s, box-shadow .2s;
+}
+.dept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+.dept-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.dept-name { font-weight: 600; font-size: 16px; color: var(--text); }
+.dept-status-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-yellow { background: var(--yellow-light); color: var(--yellow); }
+.badge-red { background: var(--red-light); color: var(--red); }
+
+.dept-stats { display: flex; gap: 16px; margin-bottom: 14px; }
+.dept-stat .num { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text); }
+.dept-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.dept-wait-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.dept-wait-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .6s ease;
+}
+.fill-green { background: var(--green); }
+.fill-yellow { background: var(--gold); }
+.fill-red { background: var(--red); }
+
+.dept-doctors {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.doc-tag {
+  padding: 4px 10px;
+  background: var(--surface2);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text2);
+}
+
+/* ─── APPOINTMENT ─────────────────────────────────── */
+.appt-header { margin-bottom: 28px; }
+.appt-header h1 { font-family: 'DM Serif Display', serif; font-size: 32px; margin-bottom: 6px; }
+.appt-header p { color: var(--text2); font-size: 15px; }
+
+.doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.doctor-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: var(--shadow);
+}
+.doctor-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+.doctor-card.selected { border-color: var(--teal); background: var(--teal-light); }
+
+.doc-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.doc-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: white;
+  flex-shrink: 0;
+}
+.avatar-teal { background: var(--teal); }
+.avatar-gold { background: var(--gold); }
+.avatar-accent { background: var(--accent); }
+.avatar-blue { background: #3b6fd4; }
+.avatar-purple { background: #7c4fd4; }
+
+.doc-card-name { font-weight: 600; font-size: 15px; color: var(--text); }
+.doc-card-spec { font-size: 13px; color: var(--text3); margin-top: 2px; }
+.doc-card-rating { font-size: 12px; color: var(--gold); margin-top: 2px; }
+
+.slot-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.slot {
+  padding: 7px 13px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--surface);
+  color: var(--text2);
+}
+.slot:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+.slot.selected { background: var(--teal); color: white; border-color: var(--teal); }
+.slot.booked { background: var(--surface2); color: var(--text3); cursor: not-allowed; text-decoration: line-through; }
+
+.appt-confirm-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+.appt-confirm-info { font-size: 15px; color: var(--text); }
+.appt-confirm-info span { font-weight: 600; }
+
+/* ─── STAFF PAGE ──────────────────────────────────── */
+.staff-header { margin-bottom: 28px; }
+.staff-header h1 { font-family: 'DM Serif Display', serif; font-size: 32px; margin-bottom: 6px; }
+
+.staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.staff-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform .2s, box-shadow .2s;
+}
+.staff-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+.staff-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  color: white;
+  margin: 0 auto 14px;
+}
+
+.staff-name { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 3px; }
+.staff-role { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+.staff-dept {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  background: var(--surface2);
+  color: var(--text2);
+  margin-bottom: 12px;
+}
+.staff-avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.avail-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.avail-dot.busy { background: var(--gold); }
+.avail-text { color: var(--text3); }
+
+/* ─── POPUPS ──────────────────────────────────────── */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,23,20,.6);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.popup-overlay.show { display: flex; }
+
+.popup-box {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp .3s ease;
+  position: relative;
+}
+
+.popup-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text3);
+}
+.popup-close:hover { color: var(--text); }
+
+.emergency-popup-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--red-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+  animation: pulse-icon 1.5s infinite;
+}
+@keyframes pulse-icon {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200,64,42,.4); }
+  50% { box-shadow: 0 0 0 12px rgba(200,64,42,0); }
+}
+
+.popup-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.popup-body {
+  font-size: 14px;
+  color: var(--text2);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.warning-box {
+  background: var(--red-light);
+  border: 1px solid #f0b8ae;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--red);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.call-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all .2s;
+}
+.call-btn:hover { background: var(--accent2); }
+
+.map-popup-content {
+  text-align: center;
+}
+.map-embed {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #e6f0fb 0%, #d8eee8 100%);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+.map-placeholder-text { font-size: 13px; color: var(--text2); }
+.map-address { font-size: 14px; color: var(--text2); margin-bottom: 16px; line-height: 1.5; }
+.gmaps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 20px;
+  background: #4285f4;
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .2s;
+  cursor: pointer;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.gmaps-btn:hover { background: #2a6cd4; }
+
+/* ─── LANG POPUP ──────────────────────────────────── */
+.lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.lang-option {
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  transition: all .2s;
+}
+.lang-option:hover { border-color: var(--teal); background: var(--teal-light); color: var(--teal); }
+.lang-option.selected { border-color: var(--teal); background: var(--teal); color: white; }
+
+.accessibility-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--border); margin-top: 14px; }
+.accessibility-label { font-size: 14px; color: var(--text2); }
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  background: var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: background .2s;
+}
+.toggle-switch.on { background: var(--teal); }
+.toggle-knob {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.toggle-switch.on .toggle-knob { left: 22px; }
+
+/* ─── TOAST ───────────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--text);
+  color: white;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn .3s ease;
+  pointer-events: auto;
+  max-width: 320px;
+}
+@keyframes toastIn {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.toast.success { background: var(--green); }
+.toast.warning { background: var(--gold); }
+.toast.error { background: var(--accent); }
+
+/* ─── MISC ────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text3);
+}
+.empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+@media (max-width: 640px) {
+  nav { padding: 0 14px; gap: 0; }
+  .nav-divider { margin: 0 10px; }
+  .nav-tab { padding: 7px 10px; font-size: 13px; }
+  .page { padding: 20px 14px; }
+  .form-grid.cols-2, .form-grid.cols-3 { grid-template-columns: 1fr; }
+  .span-2 { grid-column: span 1; }
+  .result-info-grid { grid-template-columns: 1fr; }
+  .appt-confirm-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .brand-name { font-size: 14px; }
+}
+
+.insurance-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--gold-light);
+  border-radius: var(--radius-sm);
+  border: 1px solid #e8c976;
+}
+.insurance-fields { display: none; }
+.insurance-fields.show { display: grid; }
+
+.hipaa-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f0f4ff;
+  border: 1px solid #c8d4f8;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: #3b4fd4;
+  margin-top: 16px;
+}
+
+.call-active {
+  background: #e8f5ee;
+  border: 1px solid #a8d8b8;
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  display: none;
+}
+.call-active.show { display: block; }
+.call-active-title { font-weight: 600; color: var(--green); margin-bottom: 6px; }
+.call-active-sub { font-size: 13px; color: var(--text2); }
+.call-wave {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 16px 0;
+}
+.call-wave span {
+  width: 4px;
+  height: 20px;
+  background: var(--green);
+  border-radius: 2px;
+  animation: wave 1s ease-in-out infinite;
+}
+.call-wave span:nth-child(2) { animation-delay: .15s; }
+.call-wave span:nth-child(3) { animation-delay: .3s; }
+.call-wave span:nth-child(4) { animation-delay: .45s; }
+.call-wave span:nth-child(5) { animation-delay: .6s; }
+@keyframes wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(2); }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────── -->
+<nav>
+  <div class="nav-brand" onclick="showMapPopup()">
+    <div class="brand-icon">A</div>
+    <div class="brand-info">
+      <span class="brand-name">Apollo Hospitals</span>
+      <span class="brand-location">📍 Indraprastha, New Delhi</span>
+    </div>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('intake', this)">Patient Intake</button>
+    <button class="nav-tab" onclick="showPage('status', this)">Status</button>
+    <button class="nav-tab" onclick="showPage('appointment', this)">Book Appointment</button>
+    <button class="nav-tab" onclick="showPage('staff', this)">Doctors & Staff</button>
+  </div>
+  <button class="nav-emergency" onclick="showEmergencyPopup()">🚨 Emergency Call</button>
+  <button class="lang-btn" onclick="showLangPopup()">🌐 EN</button>
+</nav>
+
+<!-- ─── INTAKE PAGE ──────────────────────────────── -->
+<div class="page active" id="page-intake">
+  <div class="form-header">
+    <h1>Patient Intake Form</h1>
+    <p>Please fill in your details accurately. All information is encrypted and HIPAA/GDPR compliant.</p>
+  </div>
+
+  <div class="already-patient">
+    ℹ️ Already have an appointment? <span id="apptToggle" onclick="toggleApptField()" style="font-weight:600;color:var(--gold);cursor:pointer;margin-left:4px;">Enter your appointment number →</span>
+    <input type="text" id="apptNumField" placeholder="APT-2024-XXXX" style="display:none;margin-left:10px;padding:7px 12px;border:1.5px solid #e8c976;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;" />
+  </div>
+
+  <!-- Personal Details -->
+  <div class="form-card">
+    <div class="section-title">
+      <div class="section-icon icon-blue">👤</div>
+      Personal Information
+    </div>
+    <div class="form-grid cols-3">
+      <div class="field"><label>Full Name *</label><input type="text" placeholder="e.g. Priya Sharma" /></div>
+      <div class="field"><label>Date of Birth *</label><input type="date" /></div>
+      <div class="field"><label>Age</label><input type="number" id="field-age" placeholder="Years" /></div>
+      <div class="field"><label>Gender *</label>
+        <select><option>Select</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select>
+      </div>
+      <div class="field"><label>Blood Group *</label>
+        <select><option>Select</option><option>A+</option><option>A−</option><option>B+</option><option>B−</option><option>O+</option><option>O−</option><option>AB+</option><option>AB−</option><option>Unknown</option></select>
+      </div>
+      <div class="field"><label>Phone Number *</label><input type="tel" placeholder="+91 9XXXXXXXXX" /></div>
+      <div class="field span-2"><label>Email Address</label><input type="email" placeholder="yourname@email.com" /></div>
+      <div class="field"><label>Preferred Language</label>
+        <select><option>English</option><option>Hindi</option><option>Bengali</option><option>Telugu</option><option>Marathi</option><option>Tamil</option><option>Gujarati</option></select>
+      </div>
+      <div class="field span-full"><label>Residential Address</label><input type="text" placeholder="Full address including city and pin code" /></div>
+      <div class="field"><label>Emergency Contact Name</label><input type="text" placeholder="Name" /></div>
+      <div class="field"><label>Emergency Contact Phone</label><input type="tel" placeholder="+91 9XXXXXXXXX" /></div>
+      <div class="field"><label>Relationship</label>
+        <select><option>Select</option><option>Spouse</option><option>Parent</option><option>Child</option><option>Sibling</option><option>Friend</option><option>Other</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medical History -->
+  <div class="form-card">
+    <div class="section-title">
+      <div class="section-icon icon-teal">🏥</div>
+      Medical History
+    </div>
+    <div class="form-grid cols-2">
+      <div class="field span-full">
+        <label>Chronic / Existing Conditions</label>
+        <div class="checkbox-group" id="conditions-group">
+          <label class="checkbox-pill"><input type="checkbox" />Diabetes</label>
+          <label class="checkbox-pill"><input type="checkbox" />Hypertension</label>
+          <label class="checkbox-pill"><input type="checkbox" />Asthma</label>
+          <label class="checkbox-pill"><input type="checkbox" />Heart Disease</label>
+          <label class="checkbox-pill"><input type="checkbox" />Thyroid</label>
+          <label class="checkbox-pill"><input type="checkbox" />Arthritis</label>
+          <label class="checkbox-pill"><input type="checkbox" />Cancer (history)</label>
+          <label class="checkbox-pill"><input type="checkbox" />Kidney Disease</label>
+          <label class="checkbox-pill"><input type="checkbox" />None</label>
+        </div>
+      </div>
+      <div class="field span-full">
+        <label>Known Allergies</label>
+        <input type="text" placeholder="e.g. Penicillin, Peanuts, Latex (or None)" />
+      </div>
+      <div class="field span-full">
+        <label>Current Medications</label>
+        <textarea id="field-medications" placeholder="List medications with dosage, e.g. Metformin 500mg twice daily, Amlodipine 5mg once daily"></textarea>
+      </div>
+      <div class="field span-full">
+        <label>Recent Treatments / Hospitalizations (last 2 years)</label>
+        <textarea id="field-treatments" placeholder="Describe any surgeries, hospitalizations, procedures, or significant treatments"></textarea>
+      </div>
+      <div class="field">
+        <label>Smoking Status</label>
+        <select><option>Select</option><option>Non-smoker</option><option>Former smoker</option><option>Current smoker</option></select>
+      </div>
+      <div class="field">
+        <label>Alcohol Use</label>
+        <select><option>Select</option><option>None</option><option>Occasional</option><option>Regular</option></select>
+      </div>
+      <div class="field span-full">
+        <label>Family Medical History (relevant conditions)</label>
+        <textarea placeholder="e.g. Father — Hypertension, Mother — Type 2 Diabetes" style="min-height:60px;"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Symptoms & Visit Purpose -->
+  <div class="form-card">
+    <div class="section-title">
+      <div class="section-icon icon-red">🩺</div>
+      Current Symptoms & Visit Purpose
+    </div>
+    <div class="form-grid cols-2">
+      <div class="field span-full">
+        <label>Primary Symptoms *</label>
+        <div class="checkbox-group" id="symptoms-group">
+          <label class="checkbox-pill"><input type="checkbox" />Chest Pain</label>
+          <label class="checkbox-pill"><input type="checkbox" />Breathlessness</label>
+          <label class="checkbox-pill"><input type="checkbox" />Fever</label>
+          <label class="checkbox-pill"><input type="checkbox" />Severe Headache</label>
+          <label class="checkbox-pill"><input type="checkbox" />Abdominal Pain</label>
+          <label class="checkbox-pill"><input type="checkbox" />Dizziness / Fainting</label>
+          <label class="checkbox-pill"><input type="checkbox" />Nausea / Vomiting</label>
+          <label class="checkbox-pill"><input type="checkbox" />Rash / Skin Issue</label>
+          <label class="checkbox-pill"><input type="checkbox" />Injury / Wound</label>
+          <label class="checkbox-pill"><input type="checkbox" />Joint Pain</label>
+          <label class="checkbox-pill"><input type="checkbox" />Vision Problems</label>
+          <label class="checkbox-pill"><input type="checkbox" />Other</label>
+        </div>
+      </div>
+      <div class="field span-full">
+        <label>Describe Symptoms in Detail *</label>
+        <textarea placeholder="When did symptoms start? Severity (1-10)? Any worsening or triggers?" style="min-height:90px;"></textarea>
+      </div>
+      <div class="field">
+        <label>Symptom Duration</label>
+        <select id="field-duration"><option>Select</option><option>Just started (< 1 hour)</option><option>Few hours</option><option>1-3 days</option><option>4-7 days</option><option>1-4 weeks</option><option>1-3 months</option><option>More than 3 months</option></select>
+      </div>
+      <div class="field">
+        <label>Pain Severity (if applicable)</label>
+        <select id="field-pain"><option>Select</option><option>1-2 (Very mild)</option><option>3-4 (Mild)</option><option>5-6 (Moderate)</option><option>7-8 (Severe)</option><option>9-10 (Unbearable)</option></select>
+      </div>
+      <div class="field span-full">
+        <label>Primary Purpose of Visit *</label>
+        <select id="field-purpose">
+          <option>Select</option>
+          <option>Emergency / Acute Care</option>
+          <option>Follow-up consultation</option>
+          <option>Routine check-up</option>
+          <option>Lab results review</option>
+          <option>Prescription refill</option>
+          <option>New symptoms</option>
+          <option>Vaccination</option>
+          <option>Specialist referral</option>
+          <option>Pre-operative assessment</option>
+          <option>Post-operative care</option>
+        </select>
+      </div>
+      <div class="field span-full">
+        <label>Preferred Department / Specialization</label>
+        <select>
+          <option>No preference — auto-assign based on symptoms</option>
+          <option>Cardiology</option>
+          <option>Dermatology</option>
+          <option>Neurology</option>
+          <option>Orthopedics</option>
+          <option>Gastroenterology</option>
+          <option>Pulmonology</option>
+          <option>Ophthalmology</option>
+          <option>ENT</option>
+          <option>General Medicine</option>
+          <option>Pediatrics</option>
+          <option>Gynecology</option>
+          <option>Oncology</option>
+          <option>Nephrology</option>
+          <option>Endocrinology</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insurance -->
+  <div class="form-card">
+    <div class="section-title">
+      <div class="section-icon icon-gold">🛡️</div>
+      Insurance & Billing
+    </div>
+    <div class="insurance-toggle-row">
+      <span style="font-size:14px;color:var(--text2);">Do you have health insurance?</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="insToggleLabel" style="font-size:13px;color:var(--text3);">No</span>
+        <div class="toggle-switch" id="insToggle" onclick="toggleInsurance()">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+    <div class="insurance-fields form-grid cols-2" id="insuranceFields">
+      <div class="field"><label>Insurance Provider</label><input type="text" placeholder="e.g. Star Health, HDFC ERGO" /></div>
+      <div class="field"><label>Policy Number</label><input type="text" placeholder="Policy / Member ID" /></div>
+      <div class="field"><label>Policy Holder Name</label><input type="text" placeholder="If different from patient" /></div>
+      <div class="field"><label>Group / TPA Code</label><input type="text" placeholder="Third-party administrator code" /></div>
+    </div>
+    <div class="hipaa-note">
+      🔒 Your data is protected under HIPAA and GDPR regulations. Information is stored with end-to-end encryption and is only accessible to your treating physician.
+    </div>
+  </div>
+
+  <div class="form-submit-row">
+    <button class="btn btn-outline" onclick="clearForm()">Clear Form</button>
+    <button class="btn btn-primary" onclick="submitForm()">Submit & Get Priority →</button>
+  </div>
+</div>
+
+<!-- ─── STATUS PAGE ───────────────────────────────── -->
+<div class="page" id="page-status">
+  <div class="status-header">
+    <h1>Hospital Status</h1>
+    <p>Live crowd & wait-time info. Plan your visit before you arrive.</p>
+  </div>
+
+  <div class="week-bubbles-wrapper">
+    <div class="week-bubbles-title">This Week — Crowd Level</div>
+    <div class="week-bubbles" id="weekBubbles"></div>
+    <div class="crowd-legend">
+      <div class="legend-item"><div class="legend-dot dot-green"></div> Low crowd</div>
+      <div class="legend-item"><div class="legend-dot dot-yellow"></div> Moderate</div>
+      <div class="legend-item"><div class="legend-dot dot-red"></div> High — consider coming another time</div>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="deptFilterBar">
+    <button class="filter-chip active" onclick="filterDept('all', this)">All Departments</button>
+    <button class="filter-chip" onclick="filterDept('cardiology', this)">Cardiology</button>
+    <button class="filter-chip" onclick="filterDept('dermatology', this)">Dermatology</button>
+    <button class="filter-chip" onclick="filterDept('neurology', this)">Neurology</button>
+    <button class="filter-chip" onclick="filterDept('orthopedics', this)">Orthopedics</button>
+    <button class="filter-chip" onclick="filterDept('gastro', this)">Gastroenterology</button>
+    <button class="filter-chip" onclick="filterDept('general', this)">General Medicine</button>
+  </div>
+
+  <div class="status-grid" id="statusGrid"></div>
+</div>
+
+<!-- ─── APPOINTMENT PAGE ──────────────────────────── -->
+<div class="page" id="page-appointment">
+  <div class="appt-header">
+    <h1>Book an Appointment</h1>
+    <p>Select a doctor and choose an available time slot.</p>
+  </div>
+  <div class="filter-bar" id="apptDeptFilter">
+    <button class="filter-chip active" onclick="filterApptDept('all', this)">All</button>
+    <button class="filter-chip" onclick="filterApptDept('cardiology', this)">Cardiology</button>
+    <button class="filter-chip" onclick="filterApptDept('dermatology', this)">Dermatology</button>
+    <button class="filter-chip" onclick="filterApptDept('neurology', this)">Neurology</button>
+    <button class="filter-chip" onclick="filterApptDept('orthopedics', this)">Orthopedics</button>
+    <button class="filter-chip" onclick="filterApptDept('general', this)">General Medicine</button>
+  </div>
+  <div class="doctor-grid" id="doctorGrid"></div>
+  <div class="appt-confirm-bar" id="apptConfirmBar" style="display:none;">
+    <div class="appt-confirm-info" id="apptConfirmText">No selection yet</div>
+    <button class="btn btn-primary" onclick="confirmAppointment()">Confirm Appointment</button>
+  </div>
+</div>
+
+<!-- ─── STAFF PAGE ────────────────────────────────── -->
+<div class="page" id="page-staff">
+  <div class="staff-header">
+    <h1>Doctors & Staff</h1>
+    <p>Our medical team — available on-site today.</p>
+  </div>
+  <div class="staff-grid" id="staffGrid"></div>
+</div>
+
+<!-- ─── TRIAGE RESULT OVERLAY ─────────────────────── -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <button class="result-close" onclick="closeResult()">×</button>
+    <div class="esi-badge esi-3" id="esiBadge">ESI Level 3 — Urgent</div>
+    <div class="result-title" id="resultTitle">You will be seen shortly</div>
+    <div class="result-meta" id="resultMeta">Based on your symptoms and medical history, our triage algorithm has assigned you priority level 3.</div>
+    <div class="result-info-grid">
+      <div class="result-info-box">
+        <div class="label">Estimated Wait</div>
+        <div class="value" id="resultWait">18 min</div>
+        <div class="sub">You'll be notified by SMS</div>
+      </div>
+      <div class="result-info-box">
+        <div class="label">Report To</div>
+        <div class="value" id="resultDept" style="font-size:15px;">Cardiology</div>
+        <div class="sub" id="resultFloor">Floor 2 · Room 204</div>
+      </div>
+      <div class="result-info-box">
+        <div class="label">Queue Position</div>
+        <div class="value" id="resultQueue">#4</div>
+        <div class="sub">In your department</div>
+      </div>
+      <div class="result-info-box">
+        <div class="label">Token Number</div>
+        <div class="value" id="resultToken">T-247</div>
+        <div class="sub">Check screen at counter</div>
+      </div>
+    </div>
+    <div class="doctor-chip">
+      <div class="doctor-avatar" id="resultDocInitial">RS</div>
+      <div class="doctor-info">
+        <div class="name" id="resultDocName">Dr. Rajesh Sharma</div>
+        <div class="spec" id="resultDocSpec">Senior Cardiologist · MBBS, MD, DM</div>
+      </div>
+    </div>
+    <div class="sms-note">📱 An SMS & push notification has been sent to your registered number</div>
+  </div>
+</div>
+
+<!-- ─── EMERGENCY POPUP ───────────────────────────── -->
+<div class="popup-overlay" id="emergencyPopup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('emergencyPopup')">×</button>
+    <div class="emergency-popup-icon">🚨</div>
+    <div class="popup-title">Emergency Call</div>
+    <div class="popup-body">
+      Use this only for life-threatening emergencies such as:<br>
+      <strong>Heart attack · Stroke · Severe accident · Unconsciousness · Breathing failure</strong>
+    </div>
+    <div class="warning-box">
+      ⚠️ Misuse of emergency calls is tracked. Repeated false alarms will result in your account being blocked from this feature.
+    </div>
+    <div class="call-active" id="callActiveState">
+      <div class="call-active-title">🟢 Connected to Emergency Attendant</div>
+      <div class="call-wave">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="call-active-sub">Please stay on the line. Help is on the way to your location.<br>Estimated response: <strong>4 minutes</strong></div>
+    </div>
+    <button class="call-btn" id="callBtn" onclick="initiateCall()">
+      📞 Connect to Emergency Attendant Now
+    </button>
+  </div>
+</div>
+
+<!-- ─── MAP POPUP ─────────────────────────────────── -->
+<div class="popup-overlay" id="mapPopup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('mapPopup')">×</button>
+    <div class="map-popup-content">
+      <div class="popup-title" style="text-align:left;margin-bottom:14px;">📍 Apollo Hospitals</div>
+      <div class="map-embed">
+        <div style="text-align:center;">
+          <div style="font-size:48px;margin-bottom:8px;">🗺️</div>
+          <div class="map-placeholder-text">Interactive map · New Delhi</div>
+        </div>
+      </div>
+      <div class="map-address">Indraprastha Apollo Hospital,<br>Sarita Vihar, Delhi–Mathura Road,<br>New Delhi – 110 076</div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="gmaps-btn" onclick="openGMaps()">🗺️ Open in Google Maps</button>
+        <button class="btn btn-outline" style="font-size:13px;" onclick="closePopup('mapPopup')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── LANGUAGE POPUP ────────────────────────────── -->
+<div class="popup-overlay" id="langPopup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('langPopup')">×</button>
+    <div class="popup-title" style="text-align:left;font-size:20px;margin-bottom:4px;">Language & Accessibility</div>
+    <div style="font-size:14px;color:var(--text3);margin-bottom:4px;">Choose your preferred language</div>
+    <div class="lang-grid">
+      <div class="lang-option selected" onclick="selectLang(this, 'EN')">🇬🇧 English</div>
+      <div class="lang-option" onclick="selectLang(this, 'HI')">🇮🇳 हिंदी</div>
+      <div class="lang-option" onclick="selectLang(this, 'BN')">🇧🇩 বাংলা</div>
+      <div class="lang-option" onclick="selectLang(this, 'TE')">🇮🇳 తెలుగు</div>
+      <div class="lang-option" onclick="selectLang(this, 'TA')">🇮🇳 தமிழ்</div>
+      <div class="lang-option" onclick="selectLang(this, 'MR')">🇮🇳 मराठी</div>
+      <div class="lang-option" onclick="selectLang(this, 'GU')">🇮🇳 ગુજરાતી</div>
+      <div class="lang-option" onclick="selectLang(this, 'KN')">🇮🇳 ಕನ್ನಡ</div>
+    </div>
+    <div class="accessibility-row">
+      <span class="accessibility-label">🔠 Large Font Mode</span>
+      <div class="toggle-switch" id="fontToggle" onclick="toggleLargeFont()"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="accessibility-row">
+      <span class="accessibility-label">🔔 Push Notifications</span>
+      <div class="toggle-switch on" id="notifToggle" onclick="toggleNotif()"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="accessibility-row">
+      <span class="accessibility-label">📱 SMS Alerts</span>
+      <div class="toggle-switch on" id="smsToggle" onclick="toggleSms()"><div class="toggle-knob"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ─────────────────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── DATA ────────────────────────────────────────────
+const depts = [
+  { id: 'cardiology', name: 'Cardiology', crowd: 'high', appointments: 24, wait: 45, maxWait: 60, doctors: ['Dr. Sharma', 'Dr. Kapoor'], color: 'fill-red', badge: 'badge-red', status: 'Busy' },
+  { id: 'dermatology', name: 'Dermatology', crowd: 'low', appointments: 8, wait: 12, maxWait: 60, doctors: ['Dr. Mehta', 'Dr. Iyer'], color: 'fill-green', badge: 'badge-green', status: 'Open' },
+  { id: 'neurology', name: 'Neurology', crowd: 'medium', appointments: 15, wait: 28, maxWait: 60, doctors: ['Dr. Reddy'], color: 'fill-yellow', badge: 'badge-yellow', status: 'Moderate' },
+  { id: 'orthopedics', name: 'Orthopedics', crowd: 'low', appointments: 11, wait: 18, maxWait: 60, doctors: ['Dr. Singh', 'Dr. Patel'], color: 'fill-green', badge: 'badge-green', status: 'Open' },
+  { id: 'gastro', name: 'Gastroenterology', crowd: 'medium', appointments: 14, wait: 35, maxWait: 60, doctors: ['Dr. Gupta'], color: 'fill-yellow', badge: 'badge-yellow', status: 'Moderate' },
+  { id: 'general', name: 'General Medicine', crowd: 'high', appointments: 31, wait: 55, maxWait: 60, doctors: ['Dr. Verma', 'Dr. Roy', 'Dr. Das'], color: 'fill-red', badge: 'badge-red', status: 'Busy' },
+];
+
+const doctors = [
+  { id: 1, name: 'Dr. Rajesh Sharma', spec: 'Senior Cardiologist', dept: 'cardiology', qual: 'MBBS, MD, DM', rating: '4.9', avatar: 'RS', color: 'avatar-teal', slots: ['9:00 AM', '9:30 AM', '11:00 AM', '2:00 PM', '3:30 PM'], booked: ['9:30 AM', '2:00 PM'] },
+  { id: 2, name: 'Dr. Priya Kapoor', spec: 'Interventional Cardiologist', dept: 'cardiology', qual: 'MBBS, MD, DNB', rating: '4.7', avatar: 'PK', color: 'avatar-accent', slots: ['10:00 AM', '10:30 AM', '12:00 PM', '4:00 PM'], booked: ['12:00 PM'] },
+  { id: 3, name: 'Dr. Anjali Mehta', spec: 'Dermatologist & Cosmetologist', dept: 'dermatology', qual: 'MBBS, DVD', rating: '4.8', avatar: 'AM', color: 'avatar-gold', slots: ['9:00 AM', '10:00 AM', '11:30 AM', '2:30 PM', '4:30 PM'], booked: [] },
+  { id: 4, name: 'Dr. Suresh Reddy', spec: 'Neurologist', dept: 'neurology', qual: 'MBBS, MD, DM', rating: '4.6', avatar: 'SR', color: 'avatar-blue', slots: ['9:30 AM', '11:00 AM', '1:00 PM', '3:00 PM'], booked: ['9:30 AM', '1:00 PM'] },
+  { id: 5, name: 'Dr. Ankit Singh', spec: 'Orthopedic Surgeon', dept: 'orthopedics', qual: 'MBBS, MS (Ortho)', rating: '4.9', avatar: 'AS', color: 'avatar-teal', slots: ['9:00 AM', '10:30 AM', '12:30 PM', '3:30 PM'], booked: ['10:30 AM'] },
+  { id: 6, name: 'Dr. Ritu Verma', spec: 'General Physician', dept: 'general', qual: 'MBBS, MD', rating: '4.5', avatar: 'RV', color: 'avatar-accent', slots: ['9:00 AM', '9:30 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'], booked: ['9:00 AM', '9:30 AM', '10:00 AM', '2:00 PM'] },
+];
+
+const staff = [
+  ...doctors.map(d => ({ ...d, role: d.spec, dept_label: d.dept, available: true })),
+  { name: 'Nurse Kavita Rao', role: 'Senior Nurse', dept: 'cardiology', avatar: 'KR', color: 'avatar-teal', available: true },
+  { name: 'Dr. Pooja Iyer', role: 'Dermatologist', dept: 'dermatology', avatar: 'PI', color: 'avatar-purple', available: true },
+  { name: 'Mr. Arjun Das', role: 'Lab Technician', dept: 'general', avatar: 'AD', color: 'avatar-gold', available: false },
+  { name: 'Nurse Sunita Sharma', role: 'Triage Nurse', dept: 'general', avatar: 'SS', color: 'avatar-accent', available: true },
+];
+
+// ── WEEK BUBBLES ──────────────────────────────────
+const weekData = [
+  { day: 'Mon', num: 28, crowd: 'medium', label: 'Mod' },
+  { day: 'Tue', num: 18, crowd: 'low', label: 'Low' },
+  { day: 'Wed', num: 42, crowd: 'high', label: 'High' },
+  { day: 'Thu', num: 35, crowd: 'high', label: 'High' },
+  { day: 'Fri', num: 24, crowd: 'medium', label: 'Mod' },
+  { day: 'Sat', num: 12, crowd: 'low', label: 'Low' },
+  { day: 'Sun', num: 8, crowd: 'low', label: 'Low' },
+];
+
+const colorMap = { low: 'bubble-green', medium: 'bubble-yellow', high: 'bubble-red' };
+const today = new Date().getDay(); // 0=Sun
+const dayOffset = today === 0 ? 6 : today - 1;
+
+function buildWeekBubbles() {
+  const container = document.getElementById('weekBubbles');
+  weekData.forEach((d, i) => {
+    const isToday = i === dayOffset;
+    const div = document.createElement('div');
+    div.className = 'day-bubble' + (isToday ? ' selected' : '');
+    div.onclick = () => selectBubble(i, div);
+    div.innerHTML = `
+      <div class="bubble-day">${d.day}</div>
+      <div class="bubble-circle ${colorMap[d.crowd]}">
+        <span class="bubble-num">${d.num}</span>
+        <span class="bubble-sub">${d.label}</span>
+      </div>
+      <div class="bubble-label">${isToday ? 'Today' : ''}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function selectBubble(i, el) {
+  document.querySelectorAll('.day-bubble').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── STATUS GRID ────────────────────────────────────
+function buildStatusGrid(filter = 'all') {
+  const grid = document.getElementById('statusGrid');
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? depts : depts.filter(d => d.id === filter);
+  filtered.forEach(dept => {
+    const pct = Math.round((dept.wait / dept.maxWait) * 100);
+    const card = document.createElement('div');
+    card.className = 'dept-card';
+    card.innerHTML = `
+      <div class="dept-header">
+        <div class="dept-name">${dept.name}</div>
+        <div class="dept-status-badge ${dept.badge}">${dept.status}</div>
+      </div>
+      <div class="dept-stats">
+        <div class="dept-stat"><div class="num">${dept.appointments}</div><div class="lbl">Appointments</div></div>
+        <div class="dept-stat"><div class="num">${dept.wait}m</div><div class="lbl">Avg. Wait</div></div>
+      </div>
+      <div class="dept-wait-bar"><div class="dept-wait-fill ${dept.color}" style="width:${pct}%"></div></div>
+      <div class="dept-doctors">${dept.doctors.map(d => `<span class="doc-tag">${d}</span>`).join('')}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+function filterDept(id, el) {
+  document.querySelectorAll('#deptFilterBar .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  buildStatusGrid(id);
+}
+
+// ── DOCTOR GRID ────────────────────────────────────
+let selectedDoc = null, selectedSlot = null;
+
+function buildDoctorGrid(filter = 'all') {
+  const grid = document.getElementById('doctorGrid');
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? doctors : doctors.filter(d => d.dept === filter);
+  filtered.forEach(doc => {
+    const card = document.createElement('div');
+    card.className = 'doctor-card';
+    card.id = `doc-${doc.id}`;
+    const slots = doc.slots.map(s => `<div class="slot${doc.booked.includes(s) ? ' booked' : ''}" onclick="selectSlot(event, ${doc.id}, '${s}')">${s}</div>`).join('');
+    card.innerHTML = `
+      <div class="doc-card-header">
+        <div class="doc-avatar ${doc.color}">${doc.avatar}</div>
+        <div>
+          <div class="doc-card-name">${doc.name}</div>
+          <div class="doc-card-spec">${doc.spec}</div>
+          <div class="doc-card-rating">★ ${doc.rating} · ${doc.qual}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Available Slots</div>
+      <div class="slot-grid">${slots}</div>`;
+    card.onclick = (e) => { if (!e.target.classList.contains('slot')) selectDoctor(doc.id, card); };
+    grid.appendChild(card);
+  });
+}
+
+function selectDoctor(id, card) {
+  document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedDoc = id;
+  updateApptBar();
+}
+
+function selectSlot(e, docId, slot) {
+  e.stopPropagation();
+  if (e.target.classList.contains('booked')) return;
+  document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+  e.target.classList.add('selected');
+  selectedDoc = docId;
+  selectedSlot = slot;
+  const doc = doctors.find(d => d.id === docId);
+  document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`doc-${docId}`).classList.add('selected');
+  updateApptBar();
+}
+
+function updateApptBar() {
+  const bar = document.getElementById('apptConfirmBar');
+  const txt = document.getElementById('apptConfirmText');
+  if (selectedDoc && selectedSlot) {
+    const doc = doctors.find(d => d.id === selectedDoc);
+    txt.innerHTML = `<span>${doc.name}</span> · ${doc.spec} · <span>${selectedSlot}</span> — Today`;
+    bar.style.display = 'flex';
+  }
+}
+
+function filterApptDept(id, el) {
+  document.querySelectorAll('#apptDeptFilter .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  buildDoctorGrid(id);
+  selectedDoc = null; selectedSlot = null;
+  document.getElementById('apptConfirmBar').style.display = 'none';
+}
+
+function confirmAppointment() {
+  if (!selectedDoc || !selectedSlot) return;
+  const doc = doctors.find(d => d.id === selectedDoc);
+  showToast(`✅ Appointment confirmed with ${doc.name} at ${selectedSlot}`, 'success');
+  showToast('📱 SMS confirmation sent to your registered number', '');
+  document.getElementById('apptConfirmBar').style.display = 'none';
+  selectedDoc = null; selectedSlot = null;
+}
+
+// ── STAFF GRID ─────────────────────────────────────
+function buildStaffGrid() {
+  const grid = document.getElementById('staffGrid');
+  staff.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'staff-card';
+    card.innerHTML = `
+      <div class="staff-avatar ${s.color || 'avatar-teal'}">${s.avatar}</div>
+      <div class="staff-name">${s.name}</div>
+      <div class="staff-role">${s.role}</div>
+      <div class="staff-dept">${s.dept.charAt(0).toUpperCase() + s.dept.slice(1)}</div>
+      <div class="staff-avail">
+        <div class="avail-dot${s.available ? '' : ' busy'}"></div>
+        <span class="avail-text">${s.available ? 'Available now' : 'In consultation'}</span>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── PRIORITY SCORE ENGINE ───────────────────────────
+// PriorityScore =
+//   (SymptomScore * 0.30) + (ChronicScore * 0.10) + (TreatmentScore * 0.05) +
+//   (MedicationScore * 0.05) + (AgeScore * 0.05) + (EmergencyFlag * 0.20) +
+//   (WaitingTimeMinutes * 0.15) + (CrowdFactor * 0.10)
+// All sub-scores normalised 0–100; PriorityScore max = 100.
+
+function calcPriorityScore() {
+
+  // ── 1. SymptomScore (0–100) ─────────────────────
+  // High-severity symptoms worth more; count of ticked symptoms also matters.
+  const symptomWeights = {
+    'Chest Pain': 100, 'Breathlessness': 90, 'Dizziness / Fainting': 85,
+    'Severe Headache': 75, 'Abdominal Pain': 60, 'Injury / Wound': 65,
+    'Nausea / Vomiting': 45, 'Fever': 40, 'Vision Problems': 55,
+    'Joint Pain': 30, 'Rash / Skin Issue': 20, 'Other': 35
+  };
+  const checkedSymptoms = [...document.querySelectorAll('#symptoms-group .checkbox-pill.checked')]
+    .map(p => p.textContent.trim());
+  let rawSymptom = 0;
+  checkedSymptoms.forEach(s => { rawSymptom = Math.max(rawSymptom, symptomWeights[s] || 30); });
+  // Bonus for multiple serious symptoms (max +20)
+  const multiBonus = Math.min((checkedSymptoms.length - 1) * 7, 20);
+  const SymptomScore = Math.min(rawSymptom + (checkedSymptoms.length > 0 ? multiBonus : 0), 100);
+
+  // Pain severity boost
+  const painSel = document.getElementById('field-pain')?.value || 'Select';
+  const painMap = { 'Select': 0, '1-2 (Very mild)': 0, '3-4 (Mild)': 5,
+    '5-6 (Moderate)': 15, '7-8 (Severe)': 25, '9-10 (Unbearable)': 35 };
+  const painBoost = painMap[painSel] || 0;
+  const FinalSymptomScore = Math.min(SymptomScore + painBoost, 100);
+
+  // ── 2. ChronicScore (0–100) ─────────────────────
+  const chronicWeights = {
+    'Heart Disease': 100, 'Cancer (history)': 90, 'Kidney Disease': 80,
+    'Diabetes': 65, 'Hypertension': 60, 'Asthma': 55,
+    'Thyroid': 40, 'Arthritis': 30, 'None': 0
+  };
+  const checkedChronic = [...document.querySelectorAll('#conditions-group .checkbox-pill.checked')]
+    .map(p => p.textContent.trim());
+  let ChronicScore = 0;
+  checkedChronic.forEach(c => { ChronicScore = Math.max(ChronicScore, chronicWeights[c] || 20); });
+  // Comorbidity stacking (each additional condition adds 10, max +30)
+  ChronicScore = Math.min(ChronicScore + Math.max(0, (checkedChronic.length - 1)) * 10, 100);
+
+  // ── 3. TreatmentScore (0–100) ───────────────────
+  // If they had recent hospitalizations/surgery → higher risk
+  const treatmentText = (document.getElementById('field-treatments')?.value || '').toLowerCase();
+  let TreatmentScore = 0;
+  if (treatmentText.length > 5) {
+    const highTerms = ['surgery', 'operation', 'icu', 'chemotherapy', 'radiation', 'transplant', 'cardiac', 'stroke'];
+    const midTerms  = ['hospitalized', 'admitted', 'procedure', 'dialysis', 'biopsy'];
+    const lowTerms  = ['treatment', 'therapy', 'physiotherapy', 'consultation'];
+    if (highTerms.some(t => treatmentText.includes(t))) TreatmentScore = 90;
+    else if (midTerms.some(t => treatmentText.includes(t))) TreatmentScore = 60;
+    else if (lowTerms.some(t => treatmentText.includes(t))) TreatmentScore = 30;
+    else TreatmentScore = 20; // something was typed but unrecognised
+  }
+
+  // ── 4. MedicationScore (0–100) ──────────────────
+  const medText = (document.getElementById('field-medications')?.value || '').toLowerCase();
+  let MedicationScore = 0;
+  if (medText.length > 3) {
+    const highMeds  = ['warfarin', 'heparin', 'insulin', 'chemotherapy', 'immunosuppressant', 'digoxin', 'lithium'];
+    const midMeds   = ['metformin', 'amlodipine', 'atorvastatin', 'aspirin', 'beta blocker', 'ace inhibitor',
+                       'anticoagulant', 'steroid', 'prednisone', 'thyroxine', 'levothyroxine'];
+    const lowMeds   = ['vitamin', 'supplement', 'antacid', 'paracetamol', 'ibuprofen'];
+    // Count distinct medication lines as proxy for complexity
+    const lines = medText.split(/[,\n;]/).filter(l => l.trim().length > 2).length;
+    if (highMeds.some(m => medText.includes(m))) MedicationScore = 90;
+    else if (midMeds.some(m => medText.includes(m))) MedicationScore = 55;
+    else if (lowMeds.some(m => medText.includes(m))) MedicationScore = 20;
+    else MedicationScore = Math.min(lines * 15, 50); // unknown drugs — scale by count
+  }
+
+  // ── 5. AgeScore (0–100) ─────────────────────────
+  // Very young (<5) and elderly (>70) are higher risk
+  const age = parseInt(document.getElementById('field-age')?.value) || 30;
+  let AgeScore;
+  if (age < 1)        AgeScore = 100;
+  else if (age <= 5)  AgeScore = 90;
+  else if (age <= 14) AgeScore = 50;
+  else if (age <= 40) AgeScore = 20;
+  else if (age <= 55) AgeScore = 35;
+  else if (age <= 65) AgeScore = 55;
+  else if (age <= 75) AgeScore = 75;
+  else                AgeScore = 90;
+
+  // ── 6. EmergencyFlag (0 or 100) ─────────────────
+  // Triggered by: visit purpose = Emergency, OR critical symptoms
+  const purposeSel = document.getElementById('field-purpose')?.value || '';
+  const criticalSymptoms = ['Chest Pain', 'Breathlessness', 'Dizziness / Fainting'];
+  const hasCritical = checkedSymptoms.some(s => criticalSymptoms.includes(s));
+  const EmergencyFlag = (purposeSel === 'Emergency / Acute Care' || hasCritical) ? 100 : 0;
+
+  // ── 7. WaitingTimeMinutes (0–100 normalised) ────
+  // Simulates live queue data. We use the current dept crowd as a proxy.
+  // In production this would come from the real-time queue service.
+  const crowdWaitMap = { high: 55, medium: 28, low: 10 };
+  const currentDept = depts.find(d => d.crowd === 'high') || depts[0];
+  const rawWait = currentDept.wait; // minutes
+  // Normalise to 0–100 (cap at 60 min = 100)
+  const WaitingTimeMinutes = Math.min(Math.round((rawWait / 60) * 100), 100);
+
+  // ── 8. CrowdFactor (0–100) ──────────────────────
+  // Aggregate crowd level across all departments
+  const crowdScoreMap = { low: 20, medium: 55, high: 90 };
+  const avgCrowd = Math.round(depts.reduce((sum, d) => sum + (crowdScoreMap[d.crowd] || 20), 0) / depts.length);
+  const CrowdFactor = avgCrowd;
+
+  // ── FINAL SCORE ─────────────────────────────────
+  const PriorityScore =
+    (FinalSymptomScore  * 0.30) +
+    (ChronicScore       * 0.10) +
+    (TreatmentScore     * 0.05) +
+    (MedicationScore    * 0.05) +
+    (AgeScore           * 0.05) +
+    (EmergencyFlag      * 0.20) +
+    (WaitingTimeMinutes * 0.15) +
+    (CrowdFactor        * 0.10);
+
+  return {
+    score: Math.round(PriorityScore),
+    breakdown: { FinalSymptomScore, ChronicScore, TreatmentScore, MedicationScore,
+                 AgeScore, EmergencyFlag, WaitingTimeMinutes, CrowdFactor }
+  };
+}
+
+function scoreToESI(score, emergencyFlag) {
+  // ESI level derived from PriorityScore (0–100)
+  if (emergencyFlag === 100 || score >= 80) return 1;
+  if (score >= 60) return 2;
+  if (score >= 40) return 3;
+  if (score >= 20) return 4;
+  return 5;
+}
+
+function submitForm() {
+  const { score, breakdown } = calcPriorityScore();
+  const esiLevel = scoreToESI(score, breakdown.EmergencyFlag);
+
+  const esiLevels = {
+    1: { label: 'ESI 1 — Immediate',   title: 'Immediate medical attention required',
+         wait: '0 min',  dept: 'Emergency',        floor: 'Ground Floor · ER Bay 1',
+         queue: '#1',  token: 'T-001',
+         meta: `Critical priority. PriorityScore: ${score}/100. You will be seen immediately by an emergency physician.`,
+         cls: 'esi-1', doc: { name: 'Dr. Suresh Reddy',  spec: 'Emergency Medicine · MBBS, MD', initial: 'SR' } },
+    2: { label: 'ESI 2 — Very Urgent', title: 'You will be seen very soon',
+         wait: '8 min',  dept: 'Cardiology / ICU',  floor: 'Floor 2 · Room 201',
+         queue: '#2',  token: 'T-089',
+         meta: `High priority. PriorityScore: ${score}/100. A physician will attend to you within minutes.`,
+         cls: 'esi-2', doc: { name: 'Dr. Rajesh Sharma', spec: 'Senior Cardiologist · MBBS, MD', initial: 'RS' } },
+    3: { label: 'ESI 3 — Urgent',      title: 'You will be seen shortly',
+         wait: '18 min', dept: 'Cardiology',         floor: 'Floor 2 · Room 204',
+         queue: '#4',  token: 'T-247',
+         meta: `Moderate-high priority. PriorityScore: ${score}/100. Please wait — you will be called shortly.`,
+         cls: 'esi-3', doc: { name: 'Dr. Rajesh Sharma', spec: 'Senior Cardiologist · MBBS, MD, DM', initial: 'RS' } },
+    4: { label: 'ESI 4 — Less Urgent', title: 'Please wait in the queue',
+         wait: '35 min', dept: 'General Medicine',   floor: 'Floor 1 · Room 108',
+         queue: '#12', token: 'T-312',
+         meta: `Routine priority. PriorityScore: ${score}/100. Your condition is stable. Please be seated.`,
+         cls: 'esi-4', doc: { name: 'Dr. Ritu Verma',    spec: 'General Physician · MBBS, MD', initial: 'RV' } },
+    5: { label: 'ESI 5 — Non-Urgent',  title: 'Routine consultation',
+         wait: '50 min', dept: 'General Medicine',   floor: 'Floor 1 · Room 112',
+         queue: '#18', token: 'T-418',
+         meta: `Low priority. PriorityScore: ${score}/100. No immediate concern. Please wait for your slot.`,
+         cls: 'esi-5', doc: { name: 'Dr. Ritu Verma',    spec: 'General Physician · MBBS, MD', initial: 'RV' } },
+  };
+
+  const r = esiLevels[esiLevel];
+  document.getElementById('esiBadge').className = `esi-badge ${r.cls}`;
+  document.getElementById('esiBadge').textContent = r.label;
+  document.getElementById('resultTitle').textContent = r.title;
+  document.getElementById('resultMeta').textContent = r.meta;
+  document.getElementById('resultWait').textContent = r.wait;
+  document.getElementById('resultDept').textContent = r.dept;
+  document.getElementById('resultFloor').textContent = r.floor;
+  document.getElementById('resultQueue').textContent = r.queue;
+  document.getElementById('resultToken').textContent = r.token;
+  document.getElementById('resultDocName').textContent = r.doc.name;
+  document.getElementById('resultDocSpec').textContent = r.doc.spec;
+  document.getElementById('resultDocInitial').textContent = r.doc.initial;
+
+  // Show score breakdown in a small details section
+  let breakdownEl = document.getElementById('scoreBreakdown');
+  if (!breakdownEl) {
+    breakdownEl = document.createElement('div');
+    breakdownEl.id = 'scoreBreakdown';
+    breakdownEl.style.cssText = 'margin-top:16px;padding:14px;background:var(--surface2);border-radius:10px;font-size:12px;';
+    document.querySelector('.result-card .sms-note').after(breakdownEl);
+  }
+  const b = breakdown;
+  breakdownEl.innerHTML = `
+    <div style="font-weight:600;color:var(--text);margin-bottom:10px;font-size:13px;">
+      🧮 PriorityScore Breakdown — <span style="color:var(--teal)">${score}/100</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      ${[
+        ['Symptoms',      b.FinalSymptomScore,  0.30],
+        ['Chronic Conds', b.ChronicScore,        0.10],
+        ['Treatments',    b.TreatmentScore,      0.05],
+        ['Medications',   b.MedicationScore,     0.05],
+        ['Age Risk',      b.AgeScore,            0.05],
+        ['Emergency',     b.EmergencyFlag,       0.20],
+        ['Wait Time',     b.WaitingTimeMinutes,  0.15],
+        ['Crowd Level',   b.CrowdFactor,         0.10],
+      ].map(([label, val, wt]) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:white;border-radius:6px;">
+          <span style="color:var(--text2)">${label}</span>
+          <span style="font-weight:600;color:var(--text)">${Math.round(val * wt)}<span style="font-weight:400;color:var(--text3);font-size:10px;"> /100×${wt}</span></span>
+        </div>`).join('')}
+    </div>`;
+
+  document.getElementById('resultOverlay').classList.add('show');
+}
+
+function closeResult() {
+  document.getElementById('resultOverlay').classList.remove('show');
+  showToast('📱 Updates will be sent to your phone', 'success');
+}
+
+function clearForm() {
+  document.querySelectorAll('.form-card input, .form-card select, .form-card textarea').forEach(el => {
+    if (el.type === 'checkbox') el.checked = false;
+    else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+  document.querySelectorAll('.checkbox-pill').forEach(p => p.classList.remove('checked'));
+  showToast('Form cleared', '');
+}
+
+// ── CHECKBOX PILLS ─────────────────────────────────
+document.addEventListener('click', e => {
+  const pill = e.target.closest('.checkbox-pill');
+  if (pill) {
+    const cb = pill.querySelector('input[type=checkbox]');
+    if (cb) { cb.checked = !cb.checked; pill.classList.toggle('checked', cb.checked); }
+  }
+});
+
+// ── APPOINTMENT NUMBER TOGGLE ──────────────────────
+function toggleApptField() {
+  const field = document.getElementById('apptNumField');
+  field.style.display = field.style.display === 'none' ? 'inline-block' : 'none';
+  if (field.style.display !== 'none') field.focus();
+}
+
+// ── INSURANCE TOGGLE ───────────────────────────────
+function toggleInsurance() {
+  const t = document.getElementById('insToggle');
+  const f = document.getElementById('insuranceFields');
+  const l = document.getElementById('insToggleLabel');
+  t.classList.toggle('on');
+  const isOn = t.classList.contains('on');
+  f.classList.toggle('show', isOn);
+  l.textContent = isOn ? 'Yes' : 'No';
+}
+
+// ── EMERGENCY ──────────────────────────────────────
+function showEmergencyPopup() {
+  document.getElementById('callActiveState').classList.remove('show');
+  document.getElementById('callBtn').style.display = 'flex';
+  document.getElementById('emergencyPopup').classList.add('show');
+}
+
+function initiateCall() {
+  document.getElementById('callBtn').style.display = 'none';
+  document.getElementById('callActiveState').classList.add('show');
+  showToast('🚨 Emergency services alerted. Help is on the way.', 'error');
+}
+
+// ── MAP ────────────────────────────────────────────
+function showMapPopup() {
+  document.getElementById('mapPopup').classList.add('show');
+}
+
+function openGMaps() {
+  window.open('https://www.google.com/maps/dir/?api=1&destination=Apollo+Hospital+Indraprastha+New+Delhi', '_blank');
+}
+
+// ── LANG POPUP ─────────────────────────────────────
+function showLangPopup() {
+  document.getElementById('langPopup').classList.add('show');
+}
+
+function selectLang(el, code) {
+  document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.querySelector('.lang-btn').textContent = '🌐 ' + code;
+  showToast('Language updated to ' + el.textContent.trim(), 'success');
+}
+
+function toggleLargeFont() {
+  const t = document.getElementById('fontToggle');
+  t.classList.toggle('on');
+  document.body.style.fontSize = t.classList.contains('on') ? '17px' : '';
+}
+
+function toggleNotif() { document.getElementById('notifToggle').classList.toggle('on'); }
+function toggleSms() { document.getElementById('smsToggle').classList.toggle('on'); }
+
+// ── CLOSE POPUP ────────────────────────────────────
+function closePopup(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+document.querySelectorAll('.popup-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+});
+
+// ── PAGE NAVIGATION ────────────────────────────────
+function showPage(id, tabEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+}
+
+// ── TOAST ──────────────────────────────────────────
+function showToast(msg, type = '') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast' + (type ? ' ' + type : '');
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(40px)'; toast.style.transition = 'all .3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ── INIT ───────────────────────────────────────────
+buildWeekBubbles();
+buildStatusGrid();
+buildDoctorGrid();
+buildStaffGrid();
+
+// Simulate a push notification after 4s
+setTimeout(() => showToast('🔔 General Medicine wait time reduced to 40 min!', 'success'), 4000);
+</script>
+</body>
+</html>
